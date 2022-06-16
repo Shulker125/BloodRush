@@ -53,7 +53,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		f.setSize(new Dimension(1000, 800));
 		f.setBackground(Color.black);
 		f.add(this);
-		f.setResizable(false);
+		f.setResizable(true);
 		f.setLayout(new GridLayout(1,2));
 		f.addMouseListener(this);
 		f.addKeyListener(this);
@@ -199,7 +199,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	}
 	public void loadWorld() {
 		String savedGameFile = "world.txt";
-		int[][] board = new int[100][100];
+		int[][] board = new int[w.getArray().length][w.getArray().length];
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(savedGameFile));

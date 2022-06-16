@@ -80,6 +80,9 @@ public class Block{
 	}
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		g2.drawImage(img, x, y, 40, 40, null);
+		if (x >= -100 && x <= 1100 && y >= -100 && y <= 900) {
+			g2.drawImage(img, x, y, 40, 40, null);
+		}
+		
 	}
 }
