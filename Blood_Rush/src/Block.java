@@ -3,31 +3,70 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.util.Random;
 
-public class Block {
+public class Block{
 	private String type;
-	public int x, y;
+	public int x, y, asset;
 	private Image img;
 	public Block (String t, int x1, int y1) {
+		Random random = new Random();
+		int rnd = random.nextInt(5)+1;
 		x = x1;
 		y = y1;
 		type = t;
-		double rnd = Math.random();
-		if (rnd >= 0 && rnd <= 0.2) {
-			img = getImage("/imgs/testBlock-red.png");
+		switch(rnd) {
+			case 1:
+				img = getImage("/imgs/grass/grass1.png");
+				asset = 1;
+				break;
+			case 2:
+				img = getImage("/imgs/grass/grass2.png");
+				asset = 2;
+				break;
+			case 3:
+				img = getImage("/imgs/grass/grass3.png");
+				asset = 3;
+				break;
+			case 4:
+				img = getImage("/imgs/grass/grass4.png");
+				asset = 4;
+				break;
+			case 5:
+				img = getImage("/imgs/grass/grass5.png");
+				asset = 5;
+				break;
 		}
-		else if (rnd >= 0.21 && rnd <= 0.4) {
-			img = getImage("/imgs/testBlock-green.png");
+	}
+	public Block(String t, int x1, int y1, int blockType) {
+		x = x1;
+		y = y1;
+		type = t;
+		switch(blockType) {
+		case 1:
+			img = getImage("/imgs/grass/grass1.png");
+			asset = 1;
+			break;
+		case 2:
+			img = getImage("/imgs/grass/grass2.png");
+			asset = 2;
+			break;
+		case 3:
+			img = getImage("/imgs/grass/grass3.png");
+			asset = 3;
+			break;
+		case 4:
+			img = getImage("/imgs/grass/grass4.png");
+			asset = 4;
+			break;
+		case 5:
+			img = getImage("/imgs/grass/grass5.png");
+			asset = 5;
+			break;
 		}
-		else if (rnd >= 0.41 && rnd <= 0.6) {
-			img = getImage("/imgs/testBlock-blue.png");
-		}
-		else if (rnd >= 0.61 && rnd <= 0.8) {
-			img = getImage("/imgs/testBlock-yellow.png");
-		}
-		else {
-			img = getImage("/imgs/testBlock-orange.png");
-		}
+	}
+	public int getAsset() {
+		return asset;
 	}
 	private Image getImage(String path) {
 		Image tempImage = null;

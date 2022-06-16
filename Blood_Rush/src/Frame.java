@@ -13,8 +13,20 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.Random;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame; 
@@ -24,6 +36,7 @@ import javax.swing.Timer;
 
 public class Frame extends JPanel implements ActionListener, MouseListener, KeyListener {
 	World w = new World();
+	Object obj;
 	public boolean up, down, left, right;
 	public void paint(Graphics g) {
 		move();
@@ -116,6 +129,12 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			case 65: //d
 				right = true;
 				break;
+			case 32:
+				saveWorld();
+				break;
+			case 76:
+				loadWorld();
+				break;
 		}
 		
 	}
@@ -152,8 +171,59 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 				right = false;
 				break;
 		}
+		
+		
 	}
-
+	public void saveWorld() {
+		StringBuilder builder = new StringBuilder();
+		int[][] world = w.getArray();
+		for(int i = 0; i < world.length; i++)//for each row
+		{
+		   for(int j = 0; j < world[i].length; j++)//for each column
+		   {
+		      builder.append(world[i][j]+"");//append to the output string
+		      if(j < world.length - 1)//if this is not the last row element
+		         builder.append(",");//then add comma (if you don't like commas you can use spaces)
+		   }
+		   builder.append("\n");//append new line at the end of the row
+		}
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("world.txt"));
+			writer.write(builder.toString());
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//save the string representation of the board
+		
+	}
+	public void loadWorld() {
+		String savedGameFile = "world.txt";
+		int[][] board = new int[100][100];
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new FileReader(savedGameFile));
+			String line = "";
+			int row = 0;
+			while((line = reader.readLine()) != null)
+			{
+			   String[] cols = line.split(","); //note that if you have used space as separator you have to split on " "
+			   int col = 0;
+			   for(String  c : cols)
+			   {
+			      board[row][col] = Integer.parseInt(c);
+			      col++;
+			   }
+			   row++;
+			}
+			reader.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		w.setWorld(board);
+		
+	}
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
