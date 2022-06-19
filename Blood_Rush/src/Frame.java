@@ -35,8 +35,7 @@ import javax.swing.Timer;
 //access key: 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
 
 public class Frame extends JPanel implements ActionListener, MouseListener, KeyListener {
-	World w = new World();
-	Object obj;
+	World w = new World(100);
 	public boolean up, down, left, right;
 	public void paint(Graphics g) {
 		move();

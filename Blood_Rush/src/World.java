@@ -2,8 +2,8 @@ import java.awt.Graphics;
 
 public class World{
 	private Block[][] world;
-	public World() {
-		world = new Block[100][100];
+	public World(int size) {
+		world = new Block[size][size];
 		for (int i = 0; i < world.length; i++) {
 			for (int j = 0; j < world[0].length; j++) {
 				world[i][j] = new Block("grass", 0+(i*40), 0+(j*40));
