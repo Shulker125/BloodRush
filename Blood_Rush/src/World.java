@@ -5,14 +5,20 @@ public class World{
 	private int blockSize;
 	private int speed;
 	public World(int size) {
-		blockSize = 10;
-		speed = 20;
+		blockSize = 70;
+		speed = 7;
 		PerlinNoise p = new PerlinNoise(size);
 		double[][] arr = p.getArray();
 		world = new Block[size][size];
 		for (int i = 0; i < world.length; i++) {
 			for (int j = 0; j < world[0].length; j++) {
-				if (arr[i+1][j+1] > -0.3) {
+				if (arr[i+1][j+1] > 7000000) {
+					world[i][j] = new Block("rock", 0+(i*blockSize), 0+(j*blockSize));
+				}
+				else if (arr[i+1][j+1] >= 4000000 && arr[i+1][j+1] <= 7000000) {
+					world[i][j] = new Block("water", 0+(i*blockSize), 0+(j*blockSize));
+				}
+				else if (arr[i+1][j+1] >= -7000000 && arr[i+1][j+1] < 4000000) {
 					world[i][j] = new Block("grass", 0+(i*blockSize), 0+(j*blockSize));
 				}
 				else {
@@ -33,7 +39,15 @@ public class World{
 	public void setWorld(int[][] arr) {
 		for (int i = 0; i < arr.length; i++) {
 			for (int j = 0; j < arr[i].length; j++) {
-				world[i][j] = new Block("grass", 0+(i*40), 0+(j*40), arr[i][j]);
+				if (arr[i][j] >= 1 && arr[i][j] <= 5) {
+					world[i][j] = new Block("grass", 0+(i*blockSize), 0+(j*blockSize), arr[i][j]);
+				}
+				else if (arr[i][j] >= 6 && arr[i][j] <= 8) {
+					world[i][j] = new Block("desert", 0+(i*blockSize), 0+(j*blockSize), arr[i][j]);
+				}
+				else {
+					world[i][j] = new Block("rock", 0+(i*blockSize), 0+(j*blockSize), arr[i][j]);
+				}
 			}
 		}
 	}

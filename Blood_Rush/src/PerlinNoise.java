@@ -6,9 +6,9 @@ public class PerlinNoise {
     public PerlinNoise(int size) {
     	world = new double[size+2][size+2];
     	world[0][0] = Math.random();
-    	change = 0.1;
+    	change = 0.3;
     	setWorldValues();
-    	for (int i = 0; i < 10; i++) {
+    	for (int i = 0; i < 50; i++) {
     		setAverage(world);
     	}
     	
@@ -38,7 +38,7 @@ public class PerlinNoise {
     				break;
     			}
     			else if (i == 0) {
-    				if (Math.random() > 0.5 && world[i][j-1] < 0.95 || world[i][j-1] < -0.95) {
+    				if (Math.random() > 0.5 && world[i][j-1] < 0.95) {
     					world[i][j] = world[i][j-1] + (Math.random()*change);
     				}
     				else {
@@ -47,7 +47,7 @@ public class PerlinNoise {
     				
     			}
     			else if (j == 0){
-    				if (Math.random() > 0.5 && world[i-1][j] < 0.95 || world[i-1][j] < -0.95) {
+    				if (Math.random() > 0.5 && world[i-1][j] < 0.95) {
     					world[i][j] = world[i-1][j] + (Math.random()*change);
     				}
     				else {

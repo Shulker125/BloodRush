@@ -43,6 +43,8 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		g.fillRect(0, 0, 1000, 800);
 		w.paint(g, 0);
 		g.fillRect(475, 375, 50, 50);
+		/*g.setColor(new Color(0, 0, 0, 100));  //night mode 
+		g.fillRect(0, 0, 1000, 800);*/
 	}
 	public static void main(String[] arg) {
 		Frame f = new Frame();

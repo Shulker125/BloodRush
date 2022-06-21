@@ -54,6 +54,20 @@ public class Block{
 				asset = 8;
 			}
 		}
+		else if (type.equals("rock")) {
+			if (Math.random() > 0.15) {
+				img = getImage("/imgs/rock/rock1.png");
+				asset = 9;
+			}
+			else {
+				img = getImage("/imgs/rock/rock2.png");
+				asset = 10;
+			}
+		}
+		else {
+			img = getImage("/imgs/water.gif");
+			asset = 11;
+		}
 	}
 	public Block(String t, int x1, int y1, int blockType) {
 		x = x1;
@@ -81,18 +95,29 @@ public class Block{
 			asset = 5;
 			break;
 		case 6:
-			img = getImage("/imgs/desert/desert1.png");
+			img = getImage("/imgs/desert/desert2.png");
 			asset = 6;
 			break;
 		case 7:
-			img = getImage("/imgs/desert/desert2.png");
+			img = getImage("/imgs/desert/desert3.png");
 			asset = 7;
 			break;
 		case 8:
-			img = getImage("/imgs/desert/desert3.png");
+			img = getImage("/imgs/desert/desert1.png");
 			asset = 8;
 			break;
-			
+		case 9:
+			img = getImage("/imgs/rock/rock1.png");
+			asset = 9;
+			break;
+		case 10:
+			img = getImage("/imgs/rock/rock2.png");
+			asset = 10;
+			break;
+		case 11:
+			img = getImage("/imgs/water.gif");
+			asset = 11;
+			break;
 		}
 	}
 	public int getAsset() {
