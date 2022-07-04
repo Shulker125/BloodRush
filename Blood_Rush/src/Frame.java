@@ -36,13 +36,15 @@ import javax.swing.Timer;
 
 public class Frame extends JPanel implements ActionListener, MouseListener, KeyListener {
 	World w = new World(500);
+	Character c = new Character();
 	public boolean up, down, left, right;
 	public void paint(Graphics g) {
+		Graphics2D g2 = (Graphics2D) g;
 		move();
 		g.setColor(Color.black);
 		g.fillRect(0, 0, 1000, 800);
 		w.paint(g, 0);
-		g.fillRect(475, 375, 50, 50);
+		g2.drawImage(c.getImage(), 460, 360, 80, 80, null);
 		/*g.setColor(new Color(0, 0, 0, 100));  //night mode 
 		g.fillRect(0, 0, 1000, 800);*/
 	}
@@ -54,7 +56,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		f.setSize(new Dimension(1000, 800));
 		f.setBackground(Color.black);
 		f.add(this);
-		f.setResizable(true);
+		f.setResizable(false);
 		f.setLayout(new GridLayout(1,2));
 		f.addMouseListener(this);
 		f.addKeyListener(this);
@@ -126,6 +128,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 				break;
 			case 83: //s
 				down = true;
+				c.down();
 				break;
 			case 65: //d
 				right = true;
@@ -142,15 +145,19 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	public void move() {
 		if (up) {
 			w.moveUp();
+			c.up();
 		}
 		if (down) {
 			w.moveDown();
+			c.down();
 		}
 		if (left) {
 			w.moveLeft();
+			c.right();
 		}
 		if (right) {
 			w.moveRight();
+			c.left();
 		}
 	}
 	@Override
@@ -161,15 +168,19 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		switch(key) {
 			case 87: //w
 				up = false;
+				c.reset(0);
 				break;
 			case 68: //a
 				left = false;
+				c.reset(1);
 				break;
 			case 83: //s
 				down = false;
+				c.reset(2);
 				break;
 			case 65: //d
 				right = false;
+				c.reset(3);
 				break;
 		}
 		
