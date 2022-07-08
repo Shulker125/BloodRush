@@ -4,6 +4,24 @@ public class World{
 	private Block[][] world;
 	private int blockSize;
 	private int speed;
+	public World() {
+		blockSize = 70;
+		speed = 7;
+		world = new Block[10][10];
+		for (int i = 0; i < world.length; i++) {
+			for (int j = 0; j < world[i].length; j++) {
+				if (i == 5 && j == 5) {
+					world[i][j] = new Block(3454, 0+(i*blockSize), 0+(j*blockSize));
+				}
+				else if(i == 6 && j == 5) {
+					world[i][j] = new Block(3454, 0+(i*blockSize), 0+(j*blockSize));
+				}
+				else {
+					world[i][j] = new Block(1, 0+(i*blockSize), 0+(j*blockSize));
+				}
+			}
+		}
+	}
 	public World(int size) {
 		blockSize = 70;
 		speed = 7;
@@ -27,6 +45,20 @@ public class World{
 			}
 		}
 	}
+	public int getBound(String location) {
+		switch(location) {
+			case "top":
+				return world[0][0].y;
+			case "bottom":
+				return world[0][world.length-1].y+70;
+			case "left":
+				return world[0][0].x;
+			case "right":
+				return world[world.length-1][0].x+70;
+		}
+		return 0;
+		
+	}
 	public int[][] getArray() {
 		int[][] arr = new int[world.length][world[0].length];
 		for (int i = 0; i < arr.length; i++) {
@@ -35,6 +67,19 @@ public class World{
 			}
 		}
 		return arr;
+	}
+	public Block getLocation() {
+		for (Block[] r : world) {
+			for (Block c : r) {
+				if (c.x >= 430 && c.x <= 500 && c.y >= 350 && c.y <= 420) {
+					return c;
+				}
+			}
+		}
+		return null;
+	}
+	public void setSpeed(int s) {
+		speed = s;
 	}
 	public void setWorld(int[][] arr) {
 		for (int i = 0; i < arr.length; i++) {

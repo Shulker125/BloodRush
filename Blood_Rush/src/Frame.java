@@ -37,14 +37,20 @@ import javax.swing.Timer;
 public class Frame extends JPanel implements ActionListener, MouseListener, KeyListener {
 	World w = new World(500);
 	Character c = new Character();
-	public boolean up, down, left, right;
+	Block currentLocation = w.getLocation();
+	public boolean up, down, left, right, opp;
 	public void paint(Graphics g) {
+		barrier();
+		obstacle();
+		currentLocation = w.getLocation();
 		Graphics2D g2 = (Graphics2D) g;
 		move();
 		g.setColor(Color.black);
 		g.fillRect(0, 0, 1000, 800);
+		//currentLocation.paint(g, 70);
 		w.paint(g, 0);
 		g2.drawImage(c.getImage(), 460, 360, 80, 80, null);
+		//g.drawRect(480, 360, 37, 80); //player hit box
 		/*g.setColor(new Color(0, 0, 0, 100));  //night mode 
 		g.fillRect(0, 0, 1000, 800);*/
 	}
@@ -119,28 +125,63 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		// TODO Auto-generated method stub
 		int key = arg0.getKeyCode();
 		//System.out.println(key);
-		switch(key) {
-			case 87: //w
-				up = true;
-				break;
-			case 68: //a
-				left = true;
-				break;
-			case 83: //s
-				down = true;
-				c.down();
-				break;
-			case 65: //d
-				right = true;
-				break;
-			case 32:
-				saveWorld();
-				break;
-			case 76:
-				loadWorld();
-				break;
-		}
 		
+		switch(key) {
+		case 87: //w
+			up = true;
+			break;
+		case 68: //a
+			left = true;
+			break;
+		case 83: //s
+			down = true;
+			break;
+		case 65: //d
+			right = true;
+			break;
+		case 32: //space
+			saveWorld();
+			break;
+		case 76: //L
+			loadWorld();
+			break;
+		}
+	}
+	public void barrier() {
+		if (w.getBound("top") >= 360) {
+			up = false;
+		}
+		if (w.getBound("left") >= 480) {
+			right = false;
+		}
+		if (w.getBound("bottom") <= 445) {
+			down = false;
+		}
+		if(w.getBound("right") <= 520) {
+			left = false;
+		}
+	}
+	public void obstacle() {
+		if (currentLocation.isObstructed) {
+			if (currentLocation.y >= 350 && currentLocation.y <= 357 && currentLocation.x >= 450 && currentLocation.x <= 490) {
+				up = false;
+			}
+			if (currentLocation.x >= 480) {
+				left = false;
+			}
+			if (currentLocation.y <= 410 && currentLocation.y >= 406 && currentLocation.x >= 450 && currentLocation.x <= 490) {
+				down = false;
+			}
+			if(currentLocation.x <= 480) {
+				right = false;
+			}
+		}
+		else if(currentLocation.getAsset() == 11) {
+			w.setSpeed(4);
+		}
+		else {
+			w.setSpeed(7);
+		}
 	}
 	public void move() {
 		if (up) {

@@ -9,6 +9,21 @@ public class Block{
 	private String type;
 	public int x, y, asset;
 	private Image img;
+	public boolean isObstructed;
+	public Block(int type, int x1, int y1) {
+		x = x1;
+		y = y1;
+		if (type == 1) {
+			img = getImage("/imgs/grass/grass1.png");
+			asset = 1;
+			isObstructed = false;
+		}
+		else {
+			img = getImage("/imgs/grass/grass2.png");
+			asset = 2;
+			isObstructed = true;
+		}
+	}
 	public Block (String t, int x1, int y1) {
 		Random random = new Random();
 		int rnd = random.nextInt(5)+1;
@@ -21,22 +36,27 @@ public class Block{
 			case 1:
 				img = getImage("/imgs/grass/grass1.png");
 				asset = 1;
+				isObstructed = false;
 				break;
 			case 2:
 				img = getImage("/imgs/grass/grass2.png");
 				asset = 2;
+				isObstructed = true;
 				break;
 			case 3:
 				img = getImage("/imgs/grass/grass3.png");
 				asset = 3;
+				isObstructed = false;
 				break;
 			case 4:
 				img = getImage("/imgs/grass/grass4.png");
 				asset = 4;
+				isObstructed = false;
 				break;
 			case 5:
 				img = getImage("/imgs/grass/grass5.png");
 				asset = 5;
+				isObstructed = false;
 				break;
 			}
 		}
@@ -44,24 +64,29 @@ public class Block{
 			if (rnd2 >= 0.97 && rnd2 < 0.98) {
 				img = getImage("/imgs/desert/desert2.png");
 				asset = 6;
+				isObstructed = true;
 			}
 			else if (rnd2 >= 0.98) {
 				img = getImage("/imgs/desert/desert3.png");
 				asset = 7;
+				isObstructed = true;
 			}
 			else {
 				img = getImage("/imgs/desert/desert1.png");
 				asset = 8;
+				isObstructed = false;
 			}
 		}
 		else if (type.equals("rock")) {
 			if (Math.random() > 0.15) {
 				img = getImage("/imgs/rock/rock1.png");
 				asset = 9;
+				isObstructed = false;
 			}
 			else {
 				img = getImage("/imgs/rock/rock2.png");
 				asset = 10;
+				isObstructed = true;
 			}
 		}
 		else {
