@@ -2,19 +2,17 @@ import java.awt.Graphics;
 
 public class World{
 	private Block[][] world;
-	private int blockSize;
-	private int speed;
+	private int blockSize, startLocation;
 	public World() {
 		blockSize = 70;
-		speed = 7;
 		world = new Block[10][10];
 		for (int i = 0; i < world.length; i++) {
 			for (int j = 0; j < world[i].length; j++) {
 				if (i == 5 && j == 5) {
-					world[i][j] = new Block(3454, 0+(i*blockSize), 0+(j*blockSize));
+					world[i][j] = new Block(1, 0+(i*blockSize), 0+(j*blockSize));
 				}
 				else if(i == 6 && j == 5) {
-					world[i][j] = new Block(3454, 0+(i*blockSize), 0+(j*blockSize));
+					world[i][j] = new Block(1, 0+(i*blockSize), 0+(j*blockSize));
 				}
 				else {
 					world[i][j] = new Block(1, 0+(i*blockSize), 0+(j*blockSize));
@@ -23,24 +21,24 @@ public class World{
 		}
 	}
 	public World(int size) {
+		startLocation = -17500;
 		blockSize = 70;
-		speed = 7;
 		PerlinNoise p = new PerlinNoise(size);
 		double[][] arr = p.getArray();
 		world = new Block[size][size];
 		for (int i = 0; i < world.length; i++) {
 			for (int j = 0; j < world[0].length; j++) {
 				if (arr[i+1][j+1] > 7000000) {
-					world[i][j] = new Block("rock", 0+(i*blockSize), 0+(j*blockSize));
+					world[i][j] = new Block("rock", startLocation+(i*blockSize), startLocation+(j*blockSize));
 				}
 				else if (arr[i+1][j+1] >= 4000000 && arr[i+1][j+1] <= 7000000) {
-					world[i][j] = new Block("water", 0+(i*blockSize), 0+(j*blockSize));
+					world[i][j] = new Block("water", startLocation+(i*blockSize), startLocation+(j*blockSize));
 				}
 				else if (arr[i+1][j+1] >= -7000000 && arr[i+1][j+1] < 4000000) {
-					world[i][j] = new Block("grass", 0+(i*blockSize), 0+(j*blockSize));
+					world[i][j] = new Block("grass", startLocation+(i*blockSize), startLocation+(j*blockSize));
 				}
 				else {
-					world[i][j] = new Block("desert", 0+(i*blockSize), 0+(j*blockSize));
+					world[i][j] = new Block("desert", startLocation+(i*blockSize), startLocation+(j*blockSize));
 				}
 			}
 		}
@@ -78,53 +76,50 @@ public class World{
 		}
 		return null;
 	}
-	public void setSpeed(int s) {
-		speed = s;
-	}
 	public void setWorld(int[][] arr) {
 		for (int i = 0; i < arr.length; i++) {
 			for (int j = 0; j < arr[i].length; j++) {
 				if (arr[i][j] >= 1 && arr[i][j] <= 5) {
-					world[i][j] = new Block("grass", 0+(i*blockSize), 0+(j*blockSize), arr[i][j]);
+					world[i][j] = new Block("grass", startLocation+(i*blockSize), startLocation+(j*blockSize), arr[i][j]);
 				}
 				else if (arr[i][j] >= 6 && arr[i][j] <= 8) {
-					world[i][j] = new Block("desert", 0+(i*blockSize), 0+(j*blockSize), arr[i][j]);
+					world[i][j] = new Block("desert", startLocation+(i*blockSize), startLocation+(j*blockSize), arr[i][j]);
 				}
 				else {
-					world[i][j] = new Block("rock", 0+(i*blockSize), 0+(j*blockSize), arr[i][j]);
+					world[i][j] = new Block("rock", startLocation+(i*blockSize), startLocation+(j*blockSize), arr[i][j]);
 				}
 			}
 		}
 	}
-	public void paint(Graphics g, int value) {
+	public void paint(Graphics g) {
 		for (Block[] r : world) {
 			for (Block c : r) {
 				c.paint(g, blockSize);
 			}
 		}
 	}
-	public void moveUp() {
+	public void moveUp(int speed) {
 		for (Block[] r : world) {
 			for (Block c : r) {
 				c.y += speed;
 			}
 		}
 	}
-	public void moveDown() {
+	public void moveDown(int speed) {
 		for (Block[] r : world) {
 			for (Block c : r) {
 				c.y -= speed;
 			}
 		}
 	}
-	public void moveLeft() {
+	public void moveLeft(int speed) {
 		for (Block[] r : world) {
 			for (Block c : r) {
 				c.x -= speed;
 			}
 		}
 	}
-	public void moveRight() {
+	public void moveRight(int speed) {
 		for (Block[] r : world) {
 			for (Block c : r) {
 				c.x += speed;

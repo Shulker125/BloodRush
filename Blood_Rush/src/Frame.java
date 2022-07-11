@@ -38,17 +38,21 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	World w = new World(500);
 	Character c = new Character();
 	Block currentLocation = w.getLocation();
+	Image pod = getImage("/imgs/pod.png");
+	public int podX = 200, podY = 200, speed = 7;
 	public boolean up, down, left, right, opp;
 	public void paint(Graphics g) {
 		barrier();
 		obstacle();
+		podObstacle();
 		currentLocation = w.getLocation();
 		Graphics2D g2 = (Graphics2D) g;
 		move();
 		g.setColor(Color.black);
 		g.fillRect(0, 0, 1000, 800);
 		//currentLocation.paint(g, 70);
-		w.paint(g, 0);
+		w.paint(g);
+		g2.drawImage(pod, podX, podY, 300, 300, null);
 		g2.drawImage(c.getImage(), 460, 360, 80, 80, null);
 		//g.drawRect(480, 360, 37, 80); //player hit box
 		/*g.setColor(new Color(0, 0, 0, 100));  //night mode 
@@ -146,6 +150,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			loadWorld();
 			break;
 		}
+		
 	}
 	public void barrier() {
 		if (w.getBound("top") >= 360) {
@@ -159,6 +164,20 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		}
 		if(w.getBound("right") <= 520) {
 			left = false;
+		}
+	}
+	public void podObstacle() {
+		if (podX <= 460 && podX >= 449 && podY <= 410 && podY >= 160) {
+			left = false;
+		}
+		if(podX >= 245 && podX <= 249 && podY <= 410 && podY >= 160) {
+			right = false;
+		}
+		if(podY <= 410 && podY >= 400 && podX <= 460 && podX >= 245) {
+			down = false;
+		}
+		if (podY >= 160 && podY <= 170 && podX <= 460 && podX >= 245) {
+			up = false;
 		}
 	}
 	public void obstacle() {
@@ -177,28 +196,32 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			}
 		}
 		else if(currentLocation.getAsset() == 11) {
-			w.setSpeed(4);
+			speed = 4;
 		}
 		else {
-			w.setSpeed(7);
+			speed = 7;
 		}
 	}
 	public void move() {
 		if (up) {
-			w.moveUp();
+			w.moveUp(speed);
 			c.up();
+			podY += speed;
 		}
 		if (down) {
-			w.moveDown();
+			w.moveDown(speed);
 			c.down();
+			podY -= speed;
 		}
 		if (left) {
-			w.moveLeft();
+			w.moveLeft(speed);
 			c.right();
+			podX -= speed;
 		}
 		if (right) {
-			w.moveRight();
+			w.moveRight(speed);
 			c.left();
+			podX += speed;
 		}
 	}
 	@Override
@@ -282,5 +305,5 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 }
