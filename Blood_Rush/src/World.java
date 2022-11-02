@@ -1,8 +1,9 @@
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class World{
 	private Block[][] world;
-	private int blockSize, startLocation;
+	private int blockSize, startLocation, worldSize;
 	public World() {
 		blockSize = 70;
 		world = new Block[10][10];
@@ -23,9 +24,26 @@ public class World{
 	public World(int size) {
 		startLocation = -17500;
 		blockSize = 70;
-		PerlinNoise p = new PerlinNoise(size);
+		worldSize = size;
+	}
+	public int getBound(String location) {
+		switch(location) {
+			case "top":
+				return world[0][0].y;
+			case "bottom":
+				return world[0][world.length-1].y+70;
+			case "left":
+				return world[0][0].x;
+			case "right":
+				return world[world.length-1][0].x+70;
+		}
+		return 0;
+		
+	}
+	public void loadNewWorld() {
+		PerlinNoise p = new PerlinNoise(worldSize);
 		double[][] arr = p.getArray();
-		world = new Block[size][size];
+		world = new Block[worldSize][worldSize];
 		for (int i = 0; i < world.length; i++) {
 			for (int j = 0; j < world[0].length; j++) {
 				if (arr[i+1][j+1] > 7000000) {
@@ -42,20 +60,6 @@ public class World{
 				}
 			}
 		}
-	}
-	public int getBound(String location) {
-		switch(location) {
-			case "top":
-				return world[0][0].y;
-			case "bottom":
-				return world[0][world.length-1].y+70;
-			case "left":
-				return world[0][0].x;
-			case "right":
-				return world[world.length-1][0].x+70;
-		}
-		return 0;
-		
 	}
 	public int[][] getArray() {
 		int[][] arr = new int[world.length][world[0].length];
@@ -77,6 +81,7 @@ public class World{
 		return null;
 	}
 	public void setWorld(int[][] arr) {
+		world = new Block[worldSize][worldSize];
 		for (int i = 0; i < arr.length; i++) {
 			for (int j = 0; j < arr[i].length; j++) {
 				if (arr[i][j] >= 1 && arr[i][j] <= 5) {
