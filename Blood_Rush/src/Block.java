@@ -7,8 +7,8 @@ import java.util.Random;
 
 public class Block{
 	private String type;
-	public int x, y, asset;
-	private Image img;
+	public int x, y, asset, health;
+	public Image img;
 	public boolean isObstructed;
 	public Block(int type, int x1, int y1) {
 		x = x1;
@@ -39,9 +39,10 @@ public class Block{
 				isObstructed = false;
 				break;
 			case 2:
-				img = getImage("/imgs/grass/grass2.png");
+				img = getImage("/imgs/grass/grass2.png"); //tree
 				asset = 2;
 				isObstructed = true;
+				health = 100;
 				break;
 			case 3:
 				img = getImage("/imgs/grass/grass3.png");
@@ -62,14 +63,16 @@ public class Block{
 		}
 		else if (type.equals("desert")) {
 			if (rnd2 >= 0.97 && rnd2 < 0.98) {
-				img = getImage("/imgs/desert/desert2.png");
+				img = getImage("/imgs/desert/desert2.png"); //cactus
 				asset = 6;
 				isObstructed = true;
+				health = 100;
 			}
 			else if (rnd2 >= 0.98) {
-				img = getImage("/imgs/desert/desert3.png");
+				img = getImage("/imgs/desert/desert3.png"); //small stone
 				asset = 7;
 				isObstructed = true;
+				health = 200;
 			}
 			else {
 				img = getImage("/imgs/desert/desert1.png");
@@ -84,9 +87,10 @@ public class Block{
 				isObstructed = false;
 			}
 			else {
-				img = getImage("/imgs/rock/rock2.png");
+				img = getImage("/imgs/rock/rock2.png"); //rock
 				asset = 10;
 				isObstructed = true;
+				health = 300;
 			}
 		}
 		else {
@@ -145,6 +149,22 @@ public class Block{
 			break;
 		}
 	}
+	public Block(int blockType) {
+		switch(blockType) {
+			case 12:
+				img = getImage("/imgs/pod/podBlack.png");
+				asset = 12;
+				break;
+			case 13:
+				img = getImage("/imgs/pod/podFloor.png");
+				asset = 13;
+				break;
+			case 14:
+				img = getImage("/imgs/pod/podWall.png");
+				asset = 14;
+				break;
+		}
+	}
 	public int getAsset() {
 		return asset;
 	}
@@ -164,5 +184,11 @@ public class Block{
 			g2.drawImage(img, x, y, size, size, null);
 		}
 		
+	}
+	public void paintPod(Graphics g, int x, int y) {
+		Graphics2D g2 = (Graphics2D) g;
+		this.x = x;
+		this.y = y;
+		g2.drawImage(img, x, y, 70, 70, null);
 	}
 }
