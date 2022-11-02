@@ -1,10 +1,14 @@
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,38 +35,114 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame; 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 //access key: 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
 
 public class Frame extends JPanel implements ActionListener, MouseListener, KeyListener {
 	World w = new World(500);
+	JFrame f = new JFrame("Blood Rush");
 	Character c = new Character();
-	Block currentLocation = w.getLocation();
+	Weapon weapon = new Weapon("pick");
+	Block currentLocation;
+	Block[][] podInterior = getPod();
+	Font[] fonts;
+	Color newWorldColor = new Color(255, 255, 255);
+	Color loadWorldColor = new Color(255, 255, 255);
 	Image pod = getImage("/imgs/pod.png");
-	public int podX = 200, podY = 200, speed = 7;
-	public boolean up, down, left, right, opp;
+	Point p = MouseInfo.getPointerInfo().getLocation();
+	Cursor cursor;
+	public int podX = 200, podY = 200, speed = 7, interiorX = 180, interiorY = -180, locationx = 0, locationy = 0, cursorX, cursorY, iterate = 0, loadType = 0;
+	public boolean up, down, left, right, isInPod, isOnHomescreen = true, loading = false;
 	public void paint(Graphics g) {
-		barrier();
-		obstacle();
-		podObstacle();
-		currentLocation = w.getLocation();
-		Graphics2D g2 = (Graphics2D) g;
-		move();
+		pointerSet();
+		cursorHover(g);
+		//System.out.println(cursorX + "," + cursorY);
 		g.setColor(Color.black);
 		g.fillRect(0, 0, 1000, 800);
-		//currentLocation.paint(g, 70);
-		w.paint(g);
-		g2.drawImage(pod, podX, podY, 300, 300, null);
-		g2.drawImage(c.getImage(), 460, 360, 80, 80, null);
-		//g.drawRect(480, 360, 37, 80); //player hit box
-		/*g.setColor(new Color(0, 0, 0, 100));  //night mode 
-		g.fillRect(0, 0, 1000, 800);*/
+		if (isOnHomescreen) {
+			g.setFont(new Font("Comic Sans MS", Font.PLAIN, 50));
+			g.setColor(Color.white);
+			g.drawString("Title Placeholder", 300, 200);
+			g.setColor(newWorldColor);
+			g.drawString("New World", 350, 400);
+			try {
+				if (isFileEmpty()) {
+					loadWorldColor = new Color(150, 150, 150);
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			g.setColor(loadWorldColor);
+			g.drawString("Load World", 350, 500);
+			if (loading) {
+				g.setColor(Color.black);
+				g.fillRect(0, 0, 1000, 800);
+				g.setColor(Color.white);
+				g.drawString("Loading...", 400, 400);
+				loading = false;
+				isOnHomescreen = false;
+			}
+		}
+		else {
+			if (loadType == 1 && iterate == 0) {
+				w.loadNewWorld();
+			}
+			else if (loadType == 2 && iterate == 0) {
+				loadWorld();
+			}
+			iterate++;
+			currentLocation = w.getLocation();
+			if (!isInPod) {
+				barrier();
+				obstacle();
+				podObstacle();
+			}
+			currentLocation = w.getLocation();
+			Graphics2D g2 = (Graphics2D) g;
+			move();
+			//currentLocation.paint(g, 70);
+			w.paint(g);
+			g2.drawImage(pod, podX, podY, 300, 300, null);
+			if (isInPod) {
+				speed = 7;
+				g.setColor(Color.black);
+				g.fillRect(0, 0, 1000, 800);
+				for (int i = 0; i < podInterior.length; i++) {
+					for (int j = 0; j < podInterior.length; j++) {
+						podInterior[i][j].paintPod(g, interiorX+(i*70), interiorY+(j*70));
+					}
+				}
+			}
+			g2.drawImage(c.getImage(), 460, 360, 80, 80, null);
+			//g.drawRect(480, 360, 37, 80); //player hit box
+			/*g.setColor(new Color(0, 0, 0, 100));  //night mode 
+			g.fillRect(0, 0, 1000, 800);*/
+		}
+		p = MouseInfo.getPointerInfo().getLocation();
+	}
+	public void pointerSet() {
+		int winX = f.getX(), winY = f.getY();
+		p.x -= winX;
+		p.y -= winY;
+		if (p.x <= 1000 && p.x >= 0 && p.y <= 800 && p.y >= 0) {
+			cursorX = p.x;
+			cursorY = p.y;
+		}
+		else {
+			cursorX = 0;
+			cursorY = 0;
+		}
 	}
 	public static void main(String[] arg) {
 		Frame f = new Frame();
+		
+		
 	}
 	public Frame() {
-		JFrame f = new JFrame("Blood Rush");
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        fonts = ge.getAllFonts();
 		f.setSize(new Dimension(1000, 800));
 		f.setBackground(Color.black);
 		f.add(this);
@@ -109,7 +189,28 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+		int key = arg0.getButton();
+		switch(key) {
+			case 1:
+				if (cursorX >= 360 && cursorX <= 630 && cursorY >= 400 && cursorY <= 440) {
+					loading = true;
+					loadType = 1;
+					SwingUtilities.invokeLater(() ->cursor = new Cursor(Cursor.DEFAULT_CURSOR));
+					SwingUtilities.invokeLater(() -> {f.setCursor(cursor);});
+				} else
+					try {
+						if(cursorX >= 360 && cursorX <= 630 && cursorY >= 500 && cursorY <= 540 && !isFileEmpty()) {
+							loading = true;
+							loadType = 2;
+							SwingUtilities.invokeLater(() ->cursor = new Cursor(Cursor.DEFAULT_CURSOR));
+							SwingUtilities.invokeLater(() -> {f.setCursor(cursor);});
+						}
+					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+				}
+				break;
+		}
 	}
 
 	@Override
@@ -129,27 +230,70 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		// TODO Auto-generated method stub
 		int key = arg0.getKeyCode();
 		//System.out.println(key);
-		
 		switch(key) {
-		case 87: //w
-			up = true;
-			break;
-		case 68: //a
-			left = true;
-			break;
-		case 83: //s
-			down = true;
-			break;
-		case 65: //d
-			right = true;
-			break;
-		case 32: //space
-			saveWorld();
-			break;
-		case 76: //L
-			loadWorld();
-			break;
+			case 87: //w
+				up = true;
+				break;
+			case 68: //a
+				left = true;
+				break;
+			case 83: //s
+				down = true;
+				break;
+			case 65: //d
+				right = true;
+				break;
+			case 32: //space
+				if (currentLocation.isObstructed) {
+					currentLocation.health -= weapon.damage;
+					if (currentLocation.health <= 0) {
+						switch(currentLocation.getAsset()) {
+							case 2:
+								currentLocation.img = getImage("/imgs/grass/grass1.png");
+								currentLocation.isObstructed = false;
+								currentLocation.asset = 1;
+								break;
+							case 6:
+								currentLocation.img = getImage("/imgs/desert/desert1.png");
+								currentLocation.isObstructed = false;
+								currentLocation.asset = 8;
+								break;
+							case 7:
+								currentLocation.img = getImage("/imgs/desert/desert1.png");
+								currentLocation.isObstructed = false;
+								currentLocation.asset = 8;
+								break;
+							case 10:
+								if (weapon.type.equals("pick")) {
+									currentLocation.img = getImage("/imgs/rock/rock1.png");
+									currentLocation.isObstructed = false;
+									currentLocation.asset = 9;
+								}
+								break;
+						}
+					}
+				}
+		
+				//attack button
+				break;
+			case 76: //L
+				loadWorld();
+				break;
+			case 69: //e
+				if (podX >= 300 && podX <= 400 && podY >= 140 && podY <= 165 && !isInPod) {
+					isInPod = true;
+				}
+				else if (interiorX >= 160 && interiorX <= 210 && interiorY <= -150 && interiorY >= -190 && isInPod){
+					isInPod = false;
+				}
+				break;
+			case 27: //Esc
+				saveWorld();
+				isOnHomescreen = true;
+				iterate = 0;
+				break;
 		}
+		
 		
 	}
 	public void barrier() {
@@ -203,32 +347,51 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		}
 	}
 	public void move() {
-		if (up) {
-			w.moveUp(speed);
-			c.up();
-			podY += speed;
+		if (!isInPod) {
+			if (up) {
+				w.moveUp(speed);
+				c.up();
+				podY += speed;
+			}
+			if (down) {
+				w.moveDown(speed);
+				c.down();
+				podY -= speed;
+			}
+			if (left) {
+				w.moveLeft(speed);
+				c.right();
+				podX -= speed;
+			}
+			if (right) {
+				w.moveRight(speed);
+				c.left();
+				podX += speed;
+			}
 		}
-		if (down) {
-			w.moveDown(speed);
-			c.down();
-			podY -= speed;
-		}
-		if (left) {
-			w.moveLeft(speed);
-			c.right();
-			podX -= speed;
-		}
-		if (right) {
-			w.moveRight(speed);
-			c.left();
-			podX += speed;
+		else {
+			if (up) {
+				interiorY += speed;
+				c.up();
+			}
+			if (down) {
+				interiorY -= speed;
+				c.down();
+			}
+			if (left) {
+				interiorX -= speed;
+				c.right();
+			}
+			if (right) {
+				interiorX += speed;
+				c.left();
+			}
 		}
 	}
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		int key = arg0.getKeyCode();
-		//System.out.println(key);
 		switch(key) {
 			case 87: //w
 				up = false;
@@ -275,7 +438,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	}
 	public void loadWorld() {
 		String savedGameFile = "world.txt";
-		int[][] board = new int[w.getArray().length][w.getArray().length];
+		int[][] board = new int[500][500];
 		BufferedReader reader;
 		try {
 			reader = new BufferedReader(new FileReader(savedGameFile));
@@ -300,10 +463,93 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		w.setWorld(board);
 		
 	}
+	public boolean isFileEmpty() throws FileNotFoundException {
+		BufferedReader reader = new BufferedReader(new FileReader("world.txt"));
+		try {
+			int num = reader.read();
+			reader.close();
+			if (num == -1) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			
+		}
+		return true;
+	}
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
-	
+	public void cursorHover(Graphics g) {
+		if (isOnHomescreen) {
+			try {
+				if (cursorX >= 360 && cursorX <= 630 && cursorY >= 400 && cursorY <= 440) {
+					newWorldColor = new Color(255, 0, 0);
+					SwingUtilities.invokeLater(() ->cursor = new Cursor(Cursor.HAND_CURSOR));
+					SwingUtilities.invokeLater(() -> {f.setCursor(cursor);});
+				}
+				else if (cursorX >= 360 && cursorX <= 630 && cursorY >= 500 && cursorY <= 540 && !isFileEmpty()) {
+					loadWorldColor = new Color(255, 0, 0);
+					SwingUtilities.invokeLater(() ->cursor = new Cursor(Cursor.HAND_CURSOR));
+					SwingUtilities.invokeLater(() -> {f.setCursor(cursor);});
+				}
+				else {
+					newWorldColor = new Color(255, 255, 255);
+					loadWorldColor = new Color(255, 255, 255);
+					SwingUtilities.invokeLater(() ->cursor = new Cursor(Cursor.DEFAULT_CURSOR));
+					SwingUtilities.invokeLater(() -> {f.setCursor(cursor);});
+				}
+			}
+			catch(FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			
+		}
+	}	
+	public Block[][] getPod(){
+		Block[][] pod = {{new Block(12), new Block(12), new Block(12), new Block(14), new Block(14), new Block(14),new Block(12), new Block(12), new Block(12)},
+						 {new Block(12), new Block(14), new Block(14), new Block(13), new Block(13), new Block(13),new Block(14), new Block(14), new Block(12)},
+						 {new Block(12), new Block(14), new Block(13), new Block(13), new Block(13), new Block(13),new Block(13), new Block(14), new Block(12)},
+						 {new Block(14), new Block(13), new Block(13), new Block(13), new Block(13), new Block(13),new Block(13), new Block(13), new Block(14)},
+						 {new Block(14), new Block(13), new Block(13), new Block(13), new Block(13), new Block(13),new Block(13), new Block(13), new Block(13)},
+						 {new Block(14), new Block(13), new Block(13), new Block(13), new Block(13), new Block(13),new Block(13), new Block(13), new Block(14)},
+						 {new Block(12), new Block(14), new Block(13), new Block(13), new Block(13), new Block(13),new Block(13), new Block(14), new Block(12)},
+						 {new Block(12), new Block(14), new Block(14), new Block(13), new Block(13), new Block(13),new Block(14), new Block(14), new Block(12)},
+						 {new Block(12), new Block(12), new Block(12), new Block(14), new Block(14), new Block(14),new Block(12), new Block(12), new Block(12)}
+				};
+		return pod;
+	}
+	public void podMoveUp(int speed) {
+		for (Block[] r : podInterior) {
+			for (Block c : r) {
+				c.y += speed;
+			}
+		}
+	}
+	public void podMoveDown(int speed) {
+		for (Block[] r : podInterior) {
+			for (Block c : r) {
+				c.y -= speed;
+			}
+		}
+	}
+	public void podMoveLeft(int speed) {
+		for (Block[] r : podInterior) {
+			for (Block c : r) {
+				c.x -= speed;
+			}
+		}
+	}
+	public void podMoveRight(int speed) {
+		for (Block[] r : podInterior) {
+			for (Block c : r) {
+				c.x += speed;
+			}
+		}
+	}
 }
