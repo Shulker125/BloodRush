@@ -52,7 +52,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	Image pod = getImage("/imgs/pod.png");
 	Point p = MouseInfo.getPointerInfo().getLocation();
 	Cursor cursor;
-	public int podX = 200, podY = 200, speed = 7, interiorX = 180, interiorY = -180, locationx = 0, locationy = 0, cursorX, cursorY, iterate = 0, loadType = 0;
+	public int podX = 200, podY = 200, speed = 5, interiorX = 180, interiorY = -180, locationx = 0, locationy = 0, cursorX, cursorY, iterate = 0, loadType = 0;
 	public boolean up, down, left, right, isInPod, isOnHomescreen = true, loading = false;
 	public void paint(Graphics g) {
 		pointerSet();
@@ -340,10 +340,10 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			}
 		}
 		else if(currentLocation.getAsset() == 11) {
-			speed = 4;
+			speed = 2;
 		}
 		else {
-			speed = 7;
+			speed = 5;
 		}
 	}
 	public void move() {
